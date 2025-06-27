@@ -2,7 +2,7 @@ function caridata(){
     let params = new URLSearchParams(window.location.search);
     let id = params.get("id");
 
-    let urltarget = "http://localhost/pertemuan14/server/pendudukbyid.php";
+    let urltarget = "server/pendudukbyid.php";
     let dta = `id=${id}`;
     $.ajax({
         url: urltarget,
