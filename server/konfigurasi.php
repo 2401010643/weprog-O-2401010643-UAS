@@ -2,7 +2,7 @@
 define("DBHOST", "localhost");
 define("DBUSERNAME", "root");
 define("DBPASSWORD", "");
-define("DBNAME", "dta_penduduk");  // Ubah dari 'mahasiswa' menjadi 'penduduk'
+define("DBNAME", "dta_penduduk");  
 define("DBPORT", "3306");
 
 global $koneksi;

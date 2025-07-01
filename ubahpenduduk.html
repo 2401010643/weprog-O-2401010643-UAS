@@ -1,67 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Mahasiswa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Ubah Data Penduduk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <style>
-        .jarak{padding-top: 30px;}
+        .jarak { padding-top: 30px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h3>Ubah Data Mahasiswa</h3>
+        <h3>Ubah Data Penduduk</h3>
         
-        <div class="alert alert-primary" id="sukses">
-        Perubahan Data Mahasiswa Sukses    
-        </div> 
-        <div class="alert alert-warning" id="gagal">
-        Perubahan Data Mahasiswa Mengalami kegagalan    
-        </div> 
+        <div class="alert alert-primary" id="sukses">Perubahan Data Penduduk Sukses</div> 
+        <div class="alert alert-warning" id="gagal">Perubahan Data Penduduk Mengalami Kegagalan</div> 
 
-        <form id="formDatapenduduk" method="POST" action="">
+        <form id="formDataPenduduk" method="POST" action="">
             <div class="form-group">
                 <label class="form-label">NIK</label>
-                <input class="form-control" type="text" name="txNIK" id="txNIK" disabled>
+                <input class="form-control" type="text" name="txNIK" id="txNIK" disabled />
             </div>  
             <div class="form-group">
                 <label class="form-label">Nama</label>
-                <input class="form-control" type="text" name="txNAMA" id="txNAMA">
+                <input class="form-control" type="text" name="txNAMA" id="txNAMA" />
             </div>
             <div class="form-group">
                 <label class="form-label">Alamat</label>
-                <input class="form-control" type="text" name="txALAMAT" id="txALAMAT">
+                <textarea class="form-control" name="txALAMAT" id="txALAMAT" rows="3"></textarea>
             </div>
             <div class="form-group">
-                <label class="form-label">TGL Lahir</label>
-                <input class="form-control" type="date" name="txTGL" id="txTGL">
+                <label class="form-label">Tanggal Lahir</label>
+                <input class="form-control" type="date" name="txTGL" id="txTGL" />
             </div>
-        
+            <div class="form-group">
+                <label class="form-label">Jenis Kelamin</label>
+                <select class="form-control" name="txJK" id="txJK">
+                    <option disabled selected>Pilih Jenis Kelamin</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
             
             <div class="form-group jarak">
                 <button type="submit" id="cmdSIMPAN" class="btn btn-primary">Simpan</button>
-                <a class="btn btn-warning" href="datapendududk.html">Batal</a>
+                <a class="btn btn-warning" href="datapenduduk.html">Batal</a>
             </div>      
         </form>
     </div>
-    
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="pendudukbyid.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <script src="pendudukbynik.js"></script> 
     <script>
         $(function(){
             $("#sukses").hide();
             $("#gagal").hide();
-            caridata();
+            caridata(); 
 
-            $("#formDataMHS").submit(function(e){
+            $("#formDataPenduduk").submit(function(e){
                 e.preventDefault();
-                let nim = $("#txNIM").val();
+                let nik = $("#txNIK").val();
                 let nama = $("#txNAMA").val();
+                let alamat = $("#txALAMAT").val();
                 let tgl = $("#txTGL").val();
                 let jkel = $("#txJK").val();
-                let alamat = $("#txALAMAT").val();
-                let dta = `txNIM=${nim}&txNAMA=${nama}&txALAMAT=${alamat}&txTGL=${tgl}&txJK=${jkel}`;
+
+                // encodeURIComponent untuk menghindari error karakter khusus
+                let dta = `txNIK=${encodeURIComponent(nik)}&txNAMA=${encodeURIComponent(nama)}&txALAMAT=${encodeURIComponent(alamat)}&txTGL=${encodeURIComponent(tgl)}&txJK=${encodeURIComponent(jkel)}`;
                 let urltarget = "server/pendudukupdate.php";
 
                 $.ajax({
@@ -69,22 +74,23 @@
                     type: 'POST',
                     dataType: 'json',
                     data: dta,
-                    success:function(hsl){
-                        if(hsl["error"]==0){
+                    success: function(hsl){
+                        if(hsl["error"] == 0){
                             $("#sukses").show();
-                        }else{
+                        } else {
                             $("#gagal").show();
                         }
                     },
-                    error:function(){
+                    error: function(){
                         $("#gagal").show();
                     }
                 });
-                setTimeout(()=>{
-                    window.location.href="datapenduduk.html"
-                },2000)
+
+                setTimeout(() => {
+                    window.location.href = "datapenduduk.html";
+                }, 2000);
             });
-        })
+        });
     </script>
 </body>
 </html>

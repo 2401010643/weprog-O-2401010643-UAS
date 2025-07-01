@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -16,77 +16,67 @@
     <div class="alert alert-primary" id="sukses">Penghapusan Data Penduduk Berhasil</div> 
     <div class="alert alert-warning" id="gagal">Penghapusan Data Penduduk Gagal</div> 
 
-    <form id="formDataPenduduk" method="POST">
-      <input type="hidden" id="txID">
+    <form id="formDataPenduduk" method="POST" action="">
       <div class="form-group">
         <label class="form-label">NIK</label>
-        <input class="form-control" type="text" id="txNIK" disabled />
+        <input class="form-control" type="text" name="txNIK" id="txNIK" disabled />
       </div>
       <div class="form-group">
         <label class="form-label">Nama</label>
-        <input class="form-control" type="text" id="txNAMA" disabled />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Tanggal Lahir</label>
-        <input class="form-control" type="date" id="txTGL" disabled />
+        <input class="form-control" type="text" name="txNAMA" id="txNAMA" disabled />
       </div>
       <div class="form-group">
         <label class="form-label">Alamat</label>
-        <input class="form-control" type="text" id="txALAMAT" disabled />
+        <textarea class="form-control" name="txALAMAT" id="txALAMAT" rows="3" disabled></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Lahir</label>
+        <input class="form-control" type="date" name="txTGL" id="txTGL" disabled />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Jenis Kelamin</label>
+        <select class="form-control" name="txJK" id="txJK" disabled>
+          <option disabled selected>Pilih Jenis Kelamin</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
       </div>
 
       <div class="form-group jarak">
-        <button type="submit" class="btn btn-danger">Hapus</button>
+        <button type="submit" id="cmdHapus" class="btn btn-danger">Hapus</button>
         <a class="btn btn-warning" href="datapenduduk.html">Batal</a>
       </div>
     </form>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+  <script src="pendudukbynik.js"></script>
   <script>
     $(function(){
       $("#sukses").hide();
       $("#gagal").hide();
+      caridata(); 
 
-      // Ambil ID dari URL
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
-
-      // Ambil data penduduk berdasarkan ID
-      $.getJSON(`server/pendudukbyid.php?id=${id}`, function(data){
-        if(data && data.error == "0"){
-          $("#txID").val(data.id);
-          $("#txNIK").val(data.nik);
-          $("#txNAMA").val(data.nama);
-          $("#txTGL").val(data.tanggal_lahir);
-          $("#txALAMAT").val(data.alamat);
-        } else {
-          $("#gagal").show().text("Data tidak ditemukan");
-        }
-      });
-
-      // Proses penghapusan
       $("#formDataPenduduk").submit(function(e){
         e.preventDefault();
-        const dta = { id: $("#txID").val() };
+        let nik = $("#txNIK").val();
+        let dta = `txNIK=${encodeURIComponent(nik)}`;
+        let urltarget = "server/pendudukdestroy.php";
 
         $.ajax({
-          url: "server/pendudukdestroy.php",
-          type: "POST",
+          url: urltarget,
+          type: 'POST',
+          dataType: 'json',
           data: dta,
-          dataType: "json",
-          success: function(res){
-            if(res.error == 0){
-              $("#sukses").show().text("Penghapusan sukses");
-              $("#gagal").hide();
+          success:function(hsl){
+            if(hsl["error"] == 0){
+              $("#sukses").show().html("Penghapusan sukses dilaksanakan");
             } else {
-              $("#gagal").show().text("Penghapusan gagal");
-              $("#sukses").hide();
+              $("#gagal").show().html("Penghapusan gagal dilaksanakan");
             }
           },
-          error: function(){
-            $("#gagal").show().text("Terjadi kesalahan saat menghubungi server");
-            $("#sukses").hide();
+          error:function(){
+            $("#gagal").show().html("Penghapusan gagal dilaksanakan");
           }
         });
 
