@@ -1,24 +1,30 @@
-function caridata(){
-    let a = window.location.search;
-    let urla = new URLSearchParams(a);
-    let nik = urla.get("nik"); 
+function caridata() {
+    const params = new URLSearchParams(window.location.search);
+    const nik = params.get("nik");
 
-    let urltarget = "server/pendudukbynik.php"; 
-    let dta = `nik=${encodeURIComponent(nik)}`;
+    if (!nik) {
+        $("#gagal").show().text("Parameter NIK tidak ditemukan.");
+        return;
+    }
+
     $.ajax({
-        url: urltarget,
+        url: "server/pendudukbynik.php",
         type: 'GET',
         dataType: 'json',
-        data: dta,
-        success:function(dt){
-            $("#txNIK").val(dt["isi"]["nik"]);
-            $("#txNAMA").val(dt["isi"]["nama"]);
-            $("#txALAMAT").val(dt["isi"]["alamat"]);
-            $("#txTGL").val(dt["isi"]["tanggal_lahir"]);
-            $("#txJK").val(dt["isi"]["jenis_kelamin"]);
+        data: { nik: nik },
+        success: function(dt) {
+            if (dt && !dt.error) {
+                $("#txNIK").val(dt.nik);
+                $("#txNAMA").val(dt.nama);
+                $("#txALAMAT").val(dt.alamat);
+                $("#txTGL").val(dt.tanggal_lahir);
+                $("#txJK").val(dt.jenis_kelamin);
+            } else {
+                $("#gagal").show().text("Data tidak ditemukan atau terjadi kesalahan.");
+            }
         },
-        error:function(){
-            $("#gagal").show();
+        error: function() {
+            $("#gagal").show().text("Gagal mengambil data dari server.");
         }
     });
 }

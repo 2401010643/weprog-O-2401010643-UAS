@@ -1,10 +1,9 @@
 <?php
 include_once("konfigurasi.php");
-$dta["error"] = '1';
+
+$response = ["error" => 1];
 
 if (isset($_POST["txNIK"])) {
-    $dta["error"] = '2';
-
     $nik           = mysqli_real_escape_string($koneksi, $_POST["txNIK"]);
     $nama          = mysqli_real_escape_string($koneksi, $_POST["txNAMA"]);
     $alamat        = mysqli_real_escape_string($koneksi, $_POST["txALAMAT"]);
@@ -16,18 +15,27 @@ if (isset($_POST["txNIK"])) {
                 alamat = '$alamat',
                 tanggal_lahir = '$tgl_lahir',
                 jenis_kelamin = '$jenis_kelamin'
-            WHERE nik = '$nik';";
+            WHERE nik = '$nik'";
 
-    $hasil = mysqli_query($koneksi, $sql);
-    $jAfrow = mysqli_affected_rows($koneksi);
+    $result = mysqli_query($koneksi, $sql);
 
-    if ($jAfrow > 0) {
-        $dta["error"] = '0';
+    if ($result) {
+        $affectedRows = mysqli_affected_rows($koneksi);
+        if ($affectedRows > 0) {
+            $response["error"] = 0;
+        } else {
+            // Data tidak berubah atau nik tidak ditemukan
+            $response["error"] = 1;
+            $response["msg"] = "Tidak ada data yang diubah atau NIK tidak ditemukan.";
+        }
+    } else {
+        $response["error"] = 1;
+        $response["msg"] = "Error query: " . mysqli_error($koneksi);
     }
 
     mysqli_close($koneksi);
 }
 
-header("Content-type: application/json");
-echo json_encode($dta);
-?>
+header("Content-Type: application/json; charset=utf-8");
+echo json_encode($response);
+exit;

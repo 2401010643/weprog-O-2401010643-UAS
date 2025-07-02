@@ -1,30 +1,35 @@
 <?php
-include_once("konfigurasi.php");
+include_once("konfigurasi.php"); // Pastikan $koneksi sudah didefinisikan
 
-$dta = ["error" => '1'];
+$sql = "SELECT 
+            id,
+            nik, 
+            nama, 
+            alamat, 
+            tanggal_lahir,
+            jenis_kelamin
+        FROM penduduk";
 
-if (isset($_GET["nik"])) {
-    $nik = mysqli_real_escape_string($koneksi, $_GET["nik"]); // aman dari SQL injection
-    $sql = "SELECT * FROM penduduk WHERE nik='$nik';";
-    $hasil = mysqli_query($koneksi, $sql);
+$result = mysqli_query($koneksi, $sql);
 
-    if ($hasil && mysqli_num_rows($hasil) > 0) {
-        $h = mysqli_fetch_assoc($hasil);
-        $dta = [
-            "nik"           => $h["nik"],
-            "nama"          => $h["nama"],
-            "alamat"        => $h["alamat"],
-            "tanggal_lahir" => $h["tanggal_lahir"],
-            "jenis_kelamin" => $h["jenis_kelamin"],
-            "error"         => '0'
-        ];
-    } else {
-        $dta["error"] = '2'; // data tidak ditemukan
+$h = [];
+
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $h[] = array(
+            'id'            => $row["id"],
+            'nik'           => $row["nik"],
+            'nama'          => $row["nama"],
+            'alamat'        => $row["alamat"],
+            'tanggal_lahir' => $row["tanggal_lahir"],
+            'jenis_kelamin' => $row["jenis_kelamin"]
+        );
     }
-
-    mysqli_close($koneksi);
+} else {
+    $h = ["error" => 1];
 }
 
-header("Content-type: application/json");
-echo json_encode($dta);
+header("Content-Type: application/json");
+echo json_encode($h);
+exit;  // Pastikan eksekusi berhenti setelah output JSON
 ?>
